@@ -1,16 +1,32 @@
-function require(lib, relativeTo){
-  var path = findMainPath(lib, relativeTo)
-  var code = readFile(path)
+var config = {}
 
-  var isAMD = !!code.match(/define\(/)
-  if (isAMD){
-    return loadAMD(code, path)
-  }else{
-    return loadCommonJS(code, path)
+var fondue = {
+  config: function(c){
+    config = c
   }
 }
 
-function loadAMD(code, path){
+function require(lib, parentModule){
+  var path
+  var module = findModule(lib, parentModule)
+  if (module){
+    path = getMain(module)
+  }else{
+    path = lib
+  }
+  if (!path.match(/\.js$/)) path += '.js'
+  var code = readFile(path)
+
+  var isAMD = !module && !!code.match(/define\(/)
+  if (isAMD){
+    console.log('AMD', path)
+    return loadAMD(code, path, module)
+  }else{
+    return loadCommonJS(code, path, module)
+  }
+}
+
+function loadAMD(code, path, parentModule){
   code = code + '\n//@ sourceURL=' + path
   var fn = new Function('define', 'eval(arguments[1])')
   var factory
@@ -21,7 +37,7 @@ function loadAMD(code, path){
   return factory()
 }
 
-function loadCommonJS(code, path){
+function loadCommonJS(code, path, parentModule){
   code = code + '\n//@ sourceURL=' + path
   var fn = new Function('require', 'exports', 'module', 'eval(arguments[3])')
   var exports = {}
@@ -29,29 +45,32 @@ function loadCommonJS(code, path){
     exports: exports
   }
   function req(lib){
-    return require(lib, basepath(path))
+    return require(lib, parentModule && parentModule.deps)
   }
   fn(req, exports, module, code)
   return module.exports
 }
 
+function findModule(lib, within){
+  within = within || config
+  return within[lib]
+}
+
 function findMainPath(lib, relativeTo){
-  if (relativeTo){
-    var config = JSON.parse(readFile(relativeTo + '/node_modules/' + lib + '/package.json'))
-    var main = config.main
-    var path = relativeTo + 'node_modules/' + lib + '/' + main
-    console.log('found main: ' + path)
-    return path
+  if (lib.substring(0, 2) === './'){
+    return lib + '.js'
   }else{
-    console.log('findMainPath', lib, relativeTo)
-    if (lib.substring(0, 2) === './'){
-      return lib + '.js'
+    if (lib in config){
+      return getMain(config[lib])
     }
-    var config = JSON.parse(readFile('/node_modules/' + lib + '/package.json'))
-    var main = config.main
-    var path = '/node_modules/' + lib + '/' + main
-    console.log('found main: ' + path)
-    return path
+  } 
+}
+
+function getMain(module){
+  if (typeof module === 'string'){
+    return module
+  }else{
+    return module.main
   }
 }
 
