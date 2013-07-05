@@ -11,8 +11,10 @@ function require(lib, parentModule){
   var module = findModule(lib, parentModule)
   if (module){
     path = getMain(module)
-  }else{
+  }else if (isRelative(lib)){
     path = lib
+  }else{
+    throw new Error('Cannot resolve module ' + lib)
   }
   if (!path.match(/\.js$/)) path += '.js'
   var code = readFile(path)
@@ -57,7 +59,7 @@ function findModule(lib, within){
 }
 
 function findMainPath(lib, relativeTo){
-  if (lib.substring(0, 2) === './'){
+  if (isRelative(lib)){
     return lib + '.js'
   }else{
     if (lib in config){
@@ -72,6 +74,10 @@ function getMain(module){
   }else{
     return module.main
   }
+}
+
+function isRelative(path){
+  return path.substring(0, 2) === './'
 }
 
 function basepath(path){
