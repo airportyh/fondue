@@ -1,5 +1,3 @@
-var modules = {}
-
 function require(lib, relativeTo){
   var path = findMainPath(lib, relativeTo)
   var code = readFile(path)
