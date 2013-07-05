@@ -21,7 +21,6 @@ function require(lib, parentModule){
 
   var isAMD = !module && !!code.match(/define\(/)
   if (isAMD){
-    console.log('AMD', path)
     return loadAMD(code, path, module)
   }else{
     return loadCommonJS(code, path, module)

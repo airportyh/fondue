@@ -1,0 +1,5 @@
+# TODO
+
+* Now that we have node modules auto-configured. Do the same for all the other registries.
+* After that, put together a prototype of an async loader. Or possibly just mod cajon.
+

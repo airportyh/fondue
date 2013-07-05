@@ -6,7 +6,14 @@ fondue.config({
       "underscore": "node_modules/backbone/node_modules/underscore/underscore.js"
     }
   },
+  "bodydouble": {
+    "main": "node_modules/bodydouble/index.js",
+    "deps": {
+      "ispy": "node_modules/bodydouble/node_modules/ispy/index.js"
+    }
+  },
   "esprima": "node_modules/esprima/esprima.js",
+  "ispy": "node_modules/ispy/index.js",
   "module-deps": {
     "main": "node_modules/module-deps/index.js",
     "deps": {
