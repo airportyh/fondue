@@ -1,6 +1,27 @@
 function require(lib, relativeTo){
   var path = findMainPath(lib, relativeTo)
   var code = readFile(path)
+
+  var isAMD = !!code.match(/define\(/)
+  if (isAMD){
+    return loadAMD(code, path)
+  }else{
+    return loadCommonJS(code, path)
+  }
+}
+
+function loadAMD(code, path){
+  code = code + '\n//@ sourceURL=' + path
+  var fn = new Function('define', 'eval(arguments[1])')
+  var factory
+  function define(f){
+    factory = f
+  }
+  fn(define, code)
+  return factory()
+}
+
+function loadCommonJS(code, path){
   code = code + '\n//@ sourceURL=' + path
   var fn = new Function('require', 'exports', 'module', 'eval(arguments[3])')
   var exports = {}
