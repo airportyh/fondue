@@ -2,7 +2,7 @@ function require(lib, relativeTo){
   var path = findMainPath(lib, relativeTo)
   var code = readFile(path)
   code = code + '\n//@ sourceURL=' + path
-  var fn = new Function('require', 'exports', 'module', code)
+  var fn = new Function('require', 'exports', 'module', 'eval(arguments[3])')
   var exports = {}
   var module = {
     exports: exports
@@ -10,7 +10,7 @@ function require(lib, relativeTo){
   function req(lib){
     return require(lib, basepath(path))
   }
-  fn(req, exports, module)
+  fn(req, exports, module, code)
   return module.exports
 }
 
