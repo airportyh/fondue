@@ -1,5 +1,6 @@
 # TODO
 
 * Now that we have node modules auto-configured. Do the same for all the other registries.
+* support dependencies for AMD loader
 * After that, put together a prototype of an async loader. Or possibly just mod cajon.
 

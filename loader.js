@@ -7,34 +7,53 @@ var fondue = {
 }
 
 function require(lib, parentModule){
-  var path
-  var module = findModule(lib, parentModule)
-  if (module){
+  var path, format, module
+  var moduleAndFormat = getModuleAndFormat(lib, parentModule)
+  if (moduleAndFormat){
+    module = moduleAndFormat.module
     path = getMain(module)
+    format = moduleAndFormat.format
   }else if (isRelative(lib)){
     path = lib
+    format = 'commonjs'
   }else{
     throw new Error('Cannot resolve module ' + lib)
   }
+  format = format || 'commonjs'
   if (!path.match(/\.js$/)) path += '.js'
   var code = readFile(path)
 
-  var isAMD = !module && !!code.match(/define\(/)
-  if (isAMD){
+  if (format === 'amd'){
+    console.log('loading amd', path)
     return loadAMD(code, path, module)
-  }else{
+  }else if (format === 'commonjs'){
+    console.log('loading commonjs', path)
     return loadCommonJS(code, path, module)
+  }else{
+    throw new Error('Dont know what to do with format ' + format)
   }
 }
 
-function loadAMD(code, path, parentModule){
+var toString = Object.prototype.toString
+
+function loadAMD(code, path){
   code = code + '\n//@ sourceURL=' + path
   var fn = new Function('define', 'eval(arguments[1])')
-  var factory
-  function define(f){
-    factory = f
+  var factory, dependencies
+  function define(id, deps, callback){
+    if (typeof id !== 'string'){
+      callback = deps
+      deps = id
+    }
+    if (toString.call(deps) !== '[object Array]'){
+      callback = deps
+    }
+    factory = callback
+    dependencies = deps
   }
+  define.amd = {}
   fn(define, code)
+  // TODO: apply dependencies
   return factory()
 }
 
@@ -52,9 +71,26 @@ function loadCommonJS(code, path, parentModule){
   return module.exports
 }
 
-function findModule(lib, within){
-  within = within || config
-  return within[lib]
+function getModuleAndFormat(lib, within){
+  if (within){
+    var module = within[lib]
+    return {
+      module: within[lib], 
+      format: module.format
+    }
+  }
+  for (var key in config){
+    var packager = config[key]
+    var modules = packager.modules
+    if (lib in modules){
+      var module = modules[lib]
+      var format = module.format || packager.format
+      return {
+        module: module,
+        format: format
+      }
+    }
+  }
 }
 
 function findMainPath(lib, relativeTo){
