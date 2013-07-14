@@ -1,0 +1,8 @@
+{
+  "volo": {
+    "baseUrl": "volo",
+    "dependencies": {
+      "jquery": "github:jquery/jquery/2.0.3"
+    }
+  }
+}

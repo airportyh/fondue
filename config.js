@@ -1,4 +1,9 @@
 fondue.config({
+  "volo": {
+    "modules": {
+      "jquery": "volo/jquery.js"
+    }
+  },
   "bower": {
     "modules": {
       "qwery": {
