@@ -24,10 +24,8 @@ function require(lib, parentModule){
   var code = readFile(path)
 
   if (format === 'amd'){
-    console.log('loading amd', path)
     return loadAMD(code, path, module)
   }else if (format === 'commonjs'){
-    console.log('loading commonjs', path)
     return loadCommonJS(code, path, module)
   }else{
     throw new Error('Dont know what to do with format ' + format)

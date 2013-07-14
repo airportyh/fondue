@@ -1,5 +1,6 @@
 fondue.config({
   "volo": {
+    "format": "amd",
     "modules": {
       "jquery": "volo/jquery.js"
     }

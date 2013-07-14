@@ -10,6 +10,7 @@ var config = {}
 
 voloModulePaths(function(err, paths){
   config.volo = {
+    format: 'amd',
     modules: paths
   }
   modulePaths('bower_components', function(err, paths){
