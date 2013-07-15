@@ -1,0 +1,11 @@
+<script src="../loader.js"></script>
+<script src="../config.js"></script>
+<script src="assert.js"></script>
+<script>
+var async = require('async')
+async.each([1,2,5], function(n, next){
+  setTimeout(next, n)
+}, function(){
+  ok()
+})
+</script>

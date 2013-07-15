@@ -1,0 +1,9 @@
+<script src="../loader.js"></script>
+<script src="../config.js"></script>
+<script src="assert.js"></script>
+<script>
+var Backbone = require('backbone')
+var bob = new Backbone.Model({name: 'bob'})
+assert(bob.get('name') === 'bob', 'Backbone should work')
+ok()
+</script>

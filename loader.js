@@ -6,6 +6,8 @@ var fondue = {
   }
 }
 
+var baseUrl = '/'
+
 function require(lib, parentModule){
   var path, format, module
   var moduleAndFormat = getModuleAndFormat(lib, parentModule)
@@ -21,7 +23,7 @@ function require(lib, parentModule){
   }
   format = format || 'commonjs'
   if (!path.match(/\.js$/)) path += '.js'
-  var code = readFile(path)
+  var code = readFile(baseUrl + path)
 
   if (format === 'amd'){
     return loadAMD(code, path, module)

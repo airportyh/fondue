@@ -1,7 +1,7 @@
 # TODO
 
-* volo
+* write tests?
 * component
+* support relative paths for libs
 * support dependencies for AMD loader
 * After that, put together a prototype of an async loader. Or possibly just mod cajon.
-* write james burk and unscriptable emails.
